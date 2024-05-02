@@ -1,0 +1,34 @@
+name = "site-pages"
+pages_build_output_dir = "./dist"
+
+[ai]
+binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "speechtopics"
+database_id = "2ecc3066-ce72-494d-b828-6b668cf796ec"
+
+
+[[queues.producers]]
+binding = "EMAIL_ENROLLMENT_QUEUE"
+queue = "speechtopics-email-enrollment"
+
+# [vars]
+# MY_VAR = "my-variable"
+
+# [[kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "my-bucket"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = ""
+
+# [ai]
+# binding = "AI"
