@@ -14,5 +14,3 @@ database_id = "2ecc3066-ce72-494d-b828-6b668cf796ec"
 binding = "EMAIL_ENROLLMENT_QUEUE"
 queue = "speechtopics-email-enrollment"
 
-# [vars]
-# MY_VAR = "my-variable"
