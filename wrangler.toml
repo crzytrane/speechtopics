@@ -1,4 +1,4 @@
-name = "site-pages"
+name = "speechtopics"
 pages_build_output_dir = "./dist"
 
 [ai]
