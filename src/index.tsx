@@ -5,7 +5,7 @@ import { Queue } from '@cloudflare/workers-types';
 type Bindings = {
   AI: any;
   DB: D1Database;
-  EMAIL_ENROLLMENT_QUEUE: Queue
+  EMAIL_QUEUE: Queue
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -61,7 +61,7 @@ app.post('/api/mailinglist/subscribe', async (c) => {
   const code = crypto.randomUUID()
 
   if (value !== null && !value.confirmed) {
-    await c.env.EMAIL_ENROLLMENT_QUEUE.send({ type: 'subscribe', email: email, code: code });
+    await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: code });
     return c.html("Confirmation pending. Email has been resent", { status: 200 })
   }
 
@@ -70,12 +70,12 @@ app.post('/api/mailinglist/subscribe', async (c) => {
     .bind(email, code)
     .run();
 
-  await c.env.EMAIL_ENROLLMENT_QUEUE.send({ type: 'subscribe', email: email, code: code });
+  await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: code });
 
   return c.html("Confirmation email sent. Confirmation link expires in 15 minutes")
 })
 
-app.get('/api/mailinglist/unsubscribe', async (c) => {
+app.get('/mailinglist/unsubscribe', async (c) => {
   const { email, code } = c.req.query()
 
   if (!email || email === "") {
@@ -108,7 +108,7 @@ app.get('/api/mailinglist/unsubscribe', async (c) => {
   return c.html("You have been unsubscribed from the mailing list")
 })
 
-app.get('/api/mailinglist/verify', async (c) => {
+app.get('/mailinglist/verify', async (c) => {
   const { email, code } = c.req.query()
 
   if (!email || email === "") {
@@ -135,12 +135,11 @@ app.get('/api/mailinglist/verify', async (c) => {
     return c.html("Invalid code", { status: 400 })
   }
 
-  await c.env.DB
-  .prepare(`update MailingList set confirmed = 1 where email = ? and code = ?`)
+  await c.env.DB.prepare(`update MailingList set confirmed = 1 where email = ? and code = ?`)
   .bind(email, code)
   .run();
 
-  await c.env.EMAIL_ENROLLMENT_QUEUE.send({ type: 'subscribe', email, code });
+  await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email, code });
 
   return c.html("Confirmation email sent. Confirmation link expires in 15 minutes")
 })

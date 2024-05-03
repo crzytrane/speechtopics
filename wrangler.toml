@@ -9,8 +9,7 @@ binding = "DB"
 database_name = "speechtopics"
 database_id = "2ecc3066-ce72-494d-b828-6b668cf796ec"
 
-
 [[queues.producers]]
-binding = "EMAIL_ENROLLMENT_QUEUE"
-queue = "speechtopics-email-enrollment"
+binding = "EMAIL_QUEUE"
+queue = "speechtopics-email"
 
