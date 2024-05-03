@@ -12,4 +12,3 @@ database_id = "2ecc3066-ce72-494d-b828-6b668cf796ec"
 [[queues.producers]]
 binding = "EMAIL_QUEUE"
 queue = "speechtopics-email"
-
