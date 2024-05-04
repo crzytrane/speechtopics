@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
 import { renderer } from './renderer'
-import { Queue } from '@cloudflare/workers-types';
+import { D1Database, Queue, Ai } from '@cloudflare/workers-types';
 
 type Bindings = {
-  AI: any;
+  AI: Ai;
   DB: D1Database;
   EMAIL_QUEUE: Queue
 }
@@ -37,7 +37,7 @@ app.get('/api', async (c) => {
       { role: "system", content: "You give creative topics for impromptu speaking. You only respond with the topic when asked. Without quotes. In the format of a question"},
       { role: "user", content: "Give me a one liner topic in the format of a question"}
     ],
-  });
+  }) as any;
 
   const payload = result.response.trim()
 
@@ -69,6 +69,8 @@ app.post('/api/mailinglist/subscribe', async (c) => {
     .prepare(`insert into MailingList (email, code) values (?, ?)`)
     .bind(email, code)
     .run();
+
+  console.log("Sending email to", email, code)
 
   await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: code });
 
