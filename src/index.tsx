@@ -79,7 +79,7 @@ app.post('/api/mailinglist/subscribe', async (c) => {
 
   await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: code });
 
-  return c.html("Confirmation email sent. Confirmation link expires in 15 minutes")
+  return c.html("Confirmation email sent")
 })
 
 app.get('/mailinglist/unsubscribe', async (c) => {
