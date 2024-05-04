@@ -61,7 +61,6 @@ app.post('/api/mailinglist/subscribe', async (c) => {
   const code = crypto.randomUUID()
 
   if (value !== null && !value.confirmed) {
-    await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: code });
     await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: value.code });
     return c.html("Confirmation pending. Email has been resent", { status: 200 })
   }
