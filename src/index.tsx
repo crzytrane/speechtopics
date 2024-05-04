@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { FC } from 'hono/jsx'
 import { renderer } from './renderer'
 import { D1Database, Queue, Ai } from '@cloudflare/workers-types';
 
@@ -29,6 +30,12 @@ app.get('/', (c) => {
   </>, { title: 'Speech topics' })
 })
 
+const OnelineMessage: FC = ({ children }) => {
+  return (<div class="place-self-center grid gap-2 p-8">
+    <div class="place-self-center justify-center">{children}</div>
+  </div>)
+
+}
 
 app.get('/api', async (c) => {
   const result = await c.env.AI.run("@cf/meta/llama-3-8b-instruct", {
@@ -58,19 +65,17 @@ app.post('/api/mailinglist/subscribe', async (c) => {
     return c.html("You are already subscribed", { status: 200 })
   }
 
-  const code = crypto.randomUUID()
-
   if (value !== null && !value.confirmed) {
     await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: value.code });
     return c.html("Confirmation pending. Email has been resent", { status: 200 })
   }
 
+  const code = crypto.randomUUID()
+
   await c.env.DB
     .prepare(`insert into MailingList (email, code) values (?, ?)`)
     .bind(email, code)
     .run();
-
-  console.log("Sending email to", email, code)
 
   await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: code });
 
@@ -81,25 +86,25 @@ app.get('/mailinglist/unsubscribe', async (c) => {
   const { email, code } = c.req.query()
 
   if (!email || email === "") {
-    return c.html("Email is required", { status: 400 })
+    return c.render(<OnelineMessage>Email is required</OnelineMessage>)
   }
 
   if (!code || code === "") {
-    return c.html("Code is required", { status: 400 })
+    return c.render(<OnelineMessage>Code is required</OnelineMessage>)
   }
 
-  const row = await c.env.DB.prepare('select * from MailingList where email = ?').bind(email).first()
+  const row = await c.env.DB.prepare('select * from MailingList where email = ? and code = ?').bind(email, code).first()
 
   if (!row) {
-    return c.html("Email not found", { status: 400 })
+    return c.render(<OnelineMessage>Email not found</OnelineMessage>)
   }
 
   if (row.confirmed) {
-    return c.html("Email already confirmed", { status: 400 })
+    return c.render(<OnelineMessage>Email already confirmed</OnelineMessage>)
   }
 
   if (row.code !== code) {
-    return c.html("Invalid code", { status: 400 })
+    return c.render(<OnelineMessage>Invalid code</OnelineMessage>)
   }
 
   await c.env.DB
@@ -107,18 +112,18 @@ app.get('/mailinglist/unsubscribe', async (c) => {
   .bind(email)
   .run();
 
-  return c.html("You have been unsubscribed from the mailing list")
+  return c.render(<OnelineMessage>You have been unsubscribed from the mailing list</OnelineMessage>)
 })
 
 app.get('/mailinglist/verify', async (c) => {
   const { email, code } = c.req.query()
 
   if (!email || email === "") {
-    return c.html("Email is required", { status: 400 })
+    return c.render(<OnelineMessage>Email is required</OnelineMessage>)
   }
 
   if (!code || code === "") {
-    return c.html("Code is required", { status: 400 })
+    return c.render(<OnelineMessage>Code is required</OnelineMessage>)
   }
 
   const row = await c.env.DB.prepare('select * from MailingList where email = ? and code = ?')
@@ -126,15 +131,15 @@ app.get('/mailinglist/verify', async (c) => {
     .first()
 
   if (!row) {
-    return c.html("Email not found", { status: 400 })
+    return c.render(<OnelineMessage>Email not found</OnelineMessage>)
   }
 
   if (row.confirmed) {
-    return c.html("Email already confirmed", { status: 400 })
+    return c.render(<OnelineMessage>Email already confirmed</OnelineMessage>)
   }
 
   if (row.code !== code) {
-    return c.html("Invalid code", { status: 400 })
+    return c.render(<OnelineMessage>Invalid code</OnelineMessage>)
   }
 
   await c.env.DB.prepare(`update MailingList set confirmed = 1 where email = ? and code = ?`)
@@ -143,7 +148,7 @@ app.get('/mailinglist/verify', async (c) => {
 
   await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email, code });
 
-  return c.html("You have been subscribed to the mailing list")
+  return c.render(<OnelineMessage>You have been subscribed to the mailing list</OnelineMessage>)
 })
 
 export default app
