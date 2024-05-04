@@ -33,8 +33,8 @@ app.get('/', (c) => {
 const OnelineMessage: FC = ({ children }) => {
   return (<div class="place-self-center grid gap-2 p-8">
     <div class="place-self-center justify-center">{children}</div>
+    <a href="/" class="place-self-center justify-center text-blue-500">Show topic</a>
   </div>)
-
 }
 
 app.get('/api', async (c) => {

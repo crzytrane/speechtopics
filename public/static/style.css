@@ -614,6 +614,11 @@ video {
   line-height: 2.25rem;
 }
 
+.text-blue-500 {
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity));
+}
+
 .shadow-gray-100 {
   --tw-shadow-color: #f3f4f6;
   --tw-shadow: var(--tw-shadow-colored);
