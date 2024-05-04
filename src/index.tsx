@@ -62,6 +62,7 @@ app.post('/api/mailinglist/subscribe', async (c) => {
 
   if (value !== null && !value.confirmed) {
     await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: code });
+    await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email: email, code: value.code });
     return c.html("Confirmation pending. Email has been resent", { status: 200 })
   }
 
@@ -143,7 +144,7 @@ app.get('/mailinglist/verify', async (c) => {
 
   await c.env.EMAIL_QUEUE.send({ type: 'subscribe', email, code });
 
-  return c.html("Confirmation email sent. Confirmation link expires in 15 minutes")
+  return c.html("You have been subscribed to the mailing list")
 })
 
 export default app
