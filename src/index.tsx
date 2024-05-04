@@ -99,10 +99,6 @@ app.get('/mailinglist/unsubscribe', async (c) => {
     return c.render(<OnelineMessage>Email not found</OnelineMessage>)
   }
 
-  if (row.confirmed) {
-    return c.render(<OnelineMessage>Email already confirmed</OnelineMessage>)
-  }
-
   if (row.code !== code) {
     return c.render(<OnelineMessage>Invalid code</OnelineMessage>)
   }
