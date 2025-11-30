@@ -147,4 +147,8 @@ app.get('/mailinglist/verify', async (c) => {
   return c.render(<OnelineMessage>You have been subscribed to the mailing list</OnelineMessage>)
 })
 
+app.get('health', async (c) => {
+  return c.json({ status: 'ok' }, 200)
+})
+
 export default app
