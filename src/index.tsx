@@ -41,6 +41,7 @@ app.get('/api', async (c) => {
   const result = await c.env.AI.run("@cf/meta/llama-4-scout-17b-16e-instruct", {
     max_tokens: 50,
     temperature: 3,
+    frequency_penalty: 1,
     messages: [
       { role: "system", content: "You give creative topics for impromptu speaking. You only respond with the topic when asked. Without quotes. In the format of a question"},
       { role: "user", content: "Give me a one liner topic in the format of a question"}
