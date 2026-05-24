@@ -44,11 +44,11 @@ app.get('/api', async (c) => {
   const gatewayId = c.env.AI_GATEWAY_ID || 'default'
   const client = new OpenAI({
     apiKey: c.env.CF_AIG_TOKEN,
-    baseURL: await c.env.AI.gateway(gatewayId).getUrl(),
+    baseURL: await c.env.AI.gateway(gatewayId).getUrl("dynamic"),
   })
 
   const result = await client.chat.completions.create({
-    model: 'dynamic/generatetopic',
+    model: 'generatetopic',
     max_tokens: 50,
     temperature: 1,
     frequency_penalty: 1,
