@@ -42,7 +42,7 @@ app.get('/api', async (c) => {
   const gatewayId = c.env.AI_GATEWAY_ID || 'default'
   const result = await c.env.AI.run("dynamic/generatetopic", {
     max_tokens: 50,
-    // temperature: 2.5,
+    temperature: 1,
     frequency_penalty: 1,
     messages: [
       { role: "system", content: "You give creative topics for impromptu speaking. You only respond with the topic when asked. Without quotes. In the format of a question"},
