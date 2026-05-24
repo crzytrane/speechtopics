@@ -5,6 +5,7 @@ import { D1Database, Queue, Ai } from '@cloudflare/workers-types';
 
 type Bindings = {
   AI: Ai;
+  AI_GATEWAY_ID?: string;
   DB: D1Database;
   EMAIL_QUEUE: Queue
 }
@@ -38,6 +39,7 @@ const OnelineMessage: FC = ({ children }) => {
 }
 
 app.get('/api', async (c) => {
+  const gatewayId = c.env.AI_GATEWAY_ID || 'default'
   const result = await c.env.AI.run("@cf/meta/llama-4-scout-17b-16e-instruct", {
     max_tokens: 50,
     temperature: 2.5,
@@ -46,6 +48,11 @@ app.get('/api', async (c) => {
       { role: "system", content: "You give creative topics for impromptu speaking. You only respond with the topic when asked. Without quotes. In the format of a question"},
       { role: "user", content: "Give me a one liner topic in the format of a question"}
     ],
+  }, {
+    gateway: {
+      id: gatewayId,
+      collectLog: true,
+    },
   }) as any;
 
   const payload = result.response.trim()
