@@ -49,7 +49,7 @@ app.get('/api', async (c) => {
 
   const result = await client.chat.completions.create({
     model: 'generatetopic',
-    max_tokens: 50,
+    max_tokens: 1024*8,
     temperature: 1,
     frequency_penalty: 1,
     messages: [
