@@ -40,7 +40,7 @@ const OnelineMessage: FC = ({ children }) => {
 
 app.get('/api', async (c) => {
   const gatewayId = c.env.AI_GATEWAY_ID || 'default'
-  const result = await c.env.AI.run("@cf/meta/llama-4-scout-17b-16e-instruct", {
+  const result = await c.env.AI.run("dynamic/generatetopic", {
     max_tokens: 50,
     temperature: 2.5,
     frequency_penalty: 1,
