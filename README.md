@@ -1,4 +1,4 @@
-```txt
+```sh
 npm install
 npm run dev
 ```
@@ -7,12 +7,12 @@ Set `AI_GATEWAY_ID` in `wrangler.toml` or your Pages/Workers environment to the 
 
 Set the AI Gateway token as a secret before running or deploying:
 
-```txt
+```sh
 wrangler secret put CF_AIG_TOKEN
 ```
 
 Inference now uses the OpenAI-compatible client and derives the gateway base URL programmatically from `env.AI.gateway(AI_GATEWAY_ID).getUrl("openai")`, so you do not need to hardcode the account or gateway URL in code.
 
-```txt
+```sh
 npm run deploy
 ```
