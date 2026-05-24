@@ -1,3 +1,4 @@
+import OpenAI from 'openai'
 import { Hono } from 'hono'
 import { FC } from 'hono/jsx'
 import { renderer } from './renderer'
@@ -5,6 +6,7 @@ import { D1Database, Queue, Ai } from '@cloudflare/workers-types';
 
 type Bindings = {
   AI: Ai;
+  CF_AIG_TOKEN: string;
   AI_GATEWAY_ID?: string;
   DB: D1Database;
   EMAIL_QUEUE: Queue
@@ -40,7 +42,13 @@ const OnelineMessage: FC = ({ children }) => {
 
 app.get('/api', async (c) => {
   const gatewayId = c.env.AI_GATEWAY_ID || 'default'
-  const result = await c.env.AI.run("dynamic/generatetopic", {
+  const client = new OpenAI({
+    apiKey: c.env.CF_AIG_TOKEN,
+    baseURL: await c.env.AI.gateway(gatewayId).getUrl('openai'),
+  })
+
+  const result = await client.chat.completions.create({
+    model: 'dynamic/generatetopic',
     max_tokens: 50,
     temperature: 1,
     frequency_penalty: 1,
@@ -48,14 +56,13 @@ app.get('/api', async (c) => {
       { role: "system", content: "You give creative topics for impromptu speaking. You only respond with the topic when asked. Without quotes. In the format of a question"},
       { role: "user", content: "Give me a one liner topic in the format of a question"}
     ],
-  }, {
-    gateway: {
-      id: gatewayId,
-      collectLog: true,
-    },
-  }) as any;
+  })
 
-  const payload = result.response.trim()
+  const payload = result.choices[0]?.message.content?.trim()
+
+  if (!payload) {
+    throw new Error('No response returned from AI Gateway')
+  }
 
   return c.html(payload);
 })
