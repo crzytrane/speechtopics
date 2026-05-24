@@ -44,7 +44,7 @@ app.get('/api', async (c) => {
   const gatewayId = c.env.AI_GATEWAY_ID || 'default'
   const client = new OpenAI({
     apiKey: c.env.CF_AIG_TOKEN,
-    baseURL: await c.env.AI.gateway(gatewayId).getUrl('openai'),
+    baseURL: await c.env.AI.gateway(gatewayId).getUrl(),
   })
 
   const result = await client.chat.completions.create({
